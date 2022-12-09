@@ -1,0 +1,17 @@
+{
+  "name": "mee6-miner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "login": "node . login"
+  },
+  "keywords": [],
+  "author": "ossian <self@ossian.dev>",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4",
+    "puppeteer": "^18"
+  }
+}
