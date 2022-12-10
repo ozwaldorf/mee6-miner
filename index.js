@@ -5,23 +5,28 @@ const arg = process.argv[2] || 0;
 
 let page;
 
+const log = (message) => {
+  console.debug(`[${new Date().toLocaleTimeString()}] ${message}`);
+};
+
 // send message to current channel
 const send = async (message) => {
-  await page.type(
-    ".inner-NQg18Y > .textArea-2CLwUE > div > .markup-eYLPri > div",
-    message,
-    {
-      delay: 100,
-    }
-  );
-  await page.keyboard.press("Enter");
-  console.debug(`[${new Date().toLocaleTimeString()}] Sent ${message}`);
+  await page.type(".textArea-2CLwUE", message, {
+    delay: 100,
+  });
+  log(`Sent ${message}`);
+  if (arg !== "dry") {
+    await page.keyboard.press("Enter");
+  }
 };
 
 const run = async () => {
   // go to /server/channel
   await page.goto(`https://discord.com/channels/${server}/${channel}`, {
     waitUntil: "networkidle2",
+  });
+  await page.waitForSelector(".textArea-2CLwUE", {
+    timeout: 0,
   });
   // send messages
   await send("!work");
@@ -44,14 +49,23 @@ const run = async () => {
   );
 
   let headless = true;
-  if (arg === "login") {
-    console.debug(`[${new Date().toLocaleTimeString()}] Login mode`);
-    headless = false;
+  switch (arg) {
+    case "dry":
+      log("Dry run mode");
+      headless = false;
+      break;
+    case "login":
+      log("Login mode");
+      headless = false;
+      break;
+    default:
+      log(`Running miner ${arg > 0 ? `with ${arg} minutes pre-delay` : ""}`);
+      break;
   }
 
   let browser = await puppeteer.launch({
     headless,
-    userDataDir: `${process.cwd()}/.userdata`,
+    userDataDir: `${process.cwd()}/.userdata`, // must be a full path
     defaultViewport: null,
   });
   page = await browser.newPage();
@@ -65,15 +79,15 @@ const run = async () => {
     timeout: headless ? 30000 : 0,
   });
 
-  console.debug(`[${new Date().toLocaleTimeString()}] Logged in!`);
+  log(`Logged in!`);
 
-  if (headless) {
-    // run if not in login mode, after pre-delay
-    setTimeout(run, arg * 60000);
+  if (arg !== "login") {
+    // run miner with initial delay
+    setTimeout(run, arg > 0 ? arg * 60000 : 0);
   } else {
     browser.close();
   }
   debugger;
 })().catch((e) => {
-  console.error(`Error: ${e}\n\n Try running "npm start login"`);
+  log(`Error: ${e}\n\n Try running "npm start login"`);
 });

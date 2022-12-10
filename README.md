@@ -12,7 +12,8 @@ Every 1 hr + random(0-5 min):
 The idea is that work always gaurantees at least 100-300 coins, and the dice roll is a bonus.
 
 - Worst case scenario, you lose 50 coins, but net 50-250 overall
-- Middle case scenario, you win 50 coins, and net 150-350 overall
+- Middle case scenario, you draw, and net 100-300 overall
+- Better case scenario, you win 50 coins, and net 150-350 overall
 - Best case scenario, you win doubles at 100 coins, and net 200-400 overall
 
 
@@ -37,10 +38,18 @@ Rename `config.example.json` to `config.json`, and fill in the values
 4. Login to your discord account
 
 ```
-npm run login
+npm start login
 ```
 
-5. Run the autoworker
+5. Run the miner
+
+Perform a dry run (won't send after typing) using:
+
+```
+npm start dry
+```
+
+Start the bot normally:
 
 ```
 npm start
